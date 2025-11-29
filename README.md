@@ -16,4 +16,4 @@ This project demonstrates how to package a standard **Linux Bash script** into a
 
 ### 1. Build the Docker Image
 ```bash
-docker build -t backup-service .
+docker build -t backup-service.
