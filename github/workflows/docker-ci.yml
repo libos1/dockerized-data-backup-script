@@ -1,0 +1,35 @@
+name: Docker Build & Script Test
+
+on:
+  # This makes the workflow run whenever you commit code to the main branch
+  push:
+    branches: [ "main" ]
+  # And whenever you submit a Pull Request
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    # Use a standard Linux runner environment for Docker tasks
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx (required for modern Docker builds)
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false # Only build the image, don't upload it anywhere
+        tags: backup-service:latest
+        load: true # Load the image into the runner's Docker daemon for testing
+
+    - name: Test script execution
+      # This command runs the container. If the backup.sh script executes and 
+      # completes successfully, this step passes (green check). If the script 
+      # fails (e.g., due to an error in backup.sh), this step fails (red X).
+      run: |
+        docker run --rm backup-service:latest
